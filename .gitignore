@@ -1,0 +1,9 @@
+# Python local testing
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Vercel
+.vercel/

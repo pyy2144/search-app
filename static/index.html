@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>资源搜索</title>
+<style>
+:root {
+  --bg: #FFF0F3;
+  --card: #FFFFFF;
+  --primary: #E8A0BF;
+  --primary-dark: #C86B8F;
+  --primary-light: #FDE4EC;
+  --text: #4A3040;
+  --text-secondary: #8B6B7A;
+  --text-hint: #B890A0;
+  --tag-pan: #5BB5C4;
+  --tag-bt: #6BA3D6;
+  --border: #F5D5E0;
+  --shadow: 0 2px 12px rgba(200, 107, 143, 0.10);
+  --radius: 14px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+}
+
+.container {
+  width: 100%;
+  max-width: 640px;
+  padding-top: 6vh;
+  padding-bottom: 60px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.header .icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  letter-spacing: 2px;
+}
+
+.header p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Search */
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  position: sticky;
+  top: 16px;
+  z-index: 10;
+}
+
+.search-box input {
+  flex: 1;
+  height: 48px;
+  border: 2px solid var(--border);
+  border-radius: 24px;
+  padding: 0 20px;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--card);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+.search-box input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(232, 160, 191, 0.2);
+}
+
+.search-box input::placeholder {
+  color: #C8A0B0;
+}
+
+.search-box button {
+  height: 48px;
+  min-width: 48px;
+  width: 48px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.search-box button:hover { background: var(--primary-dark); }
+.search-box button:active { transform: scale(0.95); }
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.keyword-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: none;
+}
+
+.keyword-hint.show { display: block; }
+
+.keyword-hint strong {
+  color: var(--primary-dark);
+}
+
+.open-all-btn {
+  font-size: 13px;
+  padding: 6px 16px;
+  border: 1.5px solid var(--primary);
+  border-radius: 20px;
+  background: var(--card);
+  color: var(--primary-dark);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.open-all-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Section */
+.section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  padding-left: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-title .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-pan { background: var(--tag-pan); }
+.dot-bt  { background: var(--tag-bt); }
+
+/* Site cards grid */
+.site-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 420px) {
+  .site-grid { grid-template-columns: 1fr; }
+}
+
+.site-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px solid transparent;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.site-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(200, 107, 143, 0.15);
+  border-color: var(--primary-light);
+}
+
+.site-card:active {
+  transform: scale(0.97);
+}
+
+.site-card.hidden {
+  display: none;
+}
+
+.site-card .site-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.site-icon.pan { background: #E8F8FA; }
+.site-icon.bt  { background: #EDF4FB; }
+
+.site-card .site-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.site-card .site-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.site-card .site-desc {
+  font-size: 11px;
+  color: var(--text-hint);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.site-card .site-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 8px;
+  color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tag-pan { background: var(--tag-pan); }
+.tag-bt  { background: var(--tag-bt); }
+
+/* No results */
+.no-match {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-hint);
+  font-size: 14px;
+  display: none;
+}
+
+.no-match.show { display: block; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-dark);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-size: 14px;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.toast.show { opacity: 1; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 32px;
+  font-size: 12px;
+  color: #C8A0B0;
+  line-height: 1.8;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="icon">&#x1F50E;</div>
+    <h1>资源搜索</h1>
+    <p>搜索动画 / 电影 / 电视剧 / 小说 · 一键搜遍全网</p>
+  </div>
+
+  <div class="search-box">
+    <input id="searchInput" type="text" placeholder="输入资源名称..." autocomplete="off" autofocus>
+    <button id="searchBtn" title="筛选站点">&#x1F50D;</button>
+  </div>
+
+  <div class="toolbar">
+    <span id="keywordHint" class="keyword-hint">搜索 <strong></strong> — 点击站点卡片打开结果</span>
+    <button id="openAllBtn" class="open-all-btn" style="display:none">一键打开全部站点</button>
+  </div>
+
+  <div id="panSection" class="section">
+    <div class="section-title"><span class="dot dot-pan"></span> 网盘搜索</div>
+    <div id="panGrid" class="site-grid"></div>
+  </div>
+
+  <div id="btSection" class="section">
+    <div class="section-title"><span class="dot dot-bt"></span> BT / 磁力搜索</div>
+    <div id="btGrid" class="site-grid"></div>
+  </div>
+
+  <div id="noMatch" class="no-match">没有匹配的站点，换个关键词试试</div>
+
+  <div class="footer">
+    点击站点卡片在新标签页打开搜索结果<br>
+    站点列表来自公开整理，如有失效请联系更新
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// ====== Site Data ======
+const PAN_SITES = [
+  { name: '懒盘搜索', desc: '16家搜索引擎聚合', url: 'https://lzpanx.com/?q={q}', tag: '聚合' },
+  { name: '混合盘', desc: '多网盘聚合 + 时间筛选', url: 'https://hunhepan.com/?q={q}', tag: '聚合' },
+  { name: '猫狸盘搜', desc: '阿里/百度/夸克/天翼/迅雷', url: 'https://alipansou.com/?q={q}', tag: '聚合' },
+  { name: '易搜', desc: '全主流网盘 + 文件类型筛选', url: 'https://yiso.eu.org/?q={q}', tag: '聚合' },
+  { name: '千帆搜索', desc: '阿里/百度/夸克/蓝奏/天翼/迅雷', url: 'https://niceso.net/?q={q}', tag: '聚合' },
+  { name: '海搜', desc: '收录近2亿文件 50PB+', url: 'https://haisou.cc/?q={q}', tag: '海量' },
+  { name: '小白盘', desc: '页面清新 失效资源少', url: 'https://www.xiaobaipan.com/search?k={q}', tag: '老牌' },
+  { name: '盘友圈', desc: '影视/音乐/软件/图书全覆盖', url: 'https://panyq.com/?q={q}', tag: '综合' },
+  { name: '小鹿盘搜', desc: '综合类 热门推荐', url: 'https://xiaoluso.com/?q={q}', tag: '综合' },
+  { name: '竹云盘搜', desc: '主打夸克+百度', url: 'https://zhuyunso.top/?q={q}', tag: '夸克' },
+  { name: '盘了个盘', desc: '7大网盘聚合 免登录', url: 'https://panlegepan.com/?q={q}', tag: '聚合' },
+  { name: '皮卡搜索', desc: '五大网盘聚合', url: 'https://pikasoo.top/?q={q}', tag: '聚合' },
+  { name: 'PanSearch', desc: '13条线路 阿里/百度/夸克/迅雷', url: 'https://pansearch.me/?q={q}', tag: '多线路' },
+  { name: '学霸盘', desc: '百度网盘 学习资料专搜', url: 'https://xuebapan.com/?q={q}', tag: '百度' },
+  { name: '阿里搜', desc: '阿里云盘专用搜索', url: 'https://aliso.eu.org/?q={q}', tag: '阿里' },
+  { name: 'E书盘', desc: '电子书 PDF/EPUB/MOBI', url: 'https://eshupan.com/?q={q}', tag: '电子书' },
+];
+
+const BT_SITES = [
+  { name: '磁力狗', desc: '聚合型DHT搜索引擎', url: 'https://clg.im/search?q={q}', tag: '磁力' },
+  { name: '磁力云搜', desc: '影视/小说/漫画/游戏', url: 'https://ciliyunso.com/?q={q}', tag: '磁力' },
+  { name: 'Knaben', desc: '匿名安全 支持TOR+RSS', url: 'https://knaben.org/?q={q}', tag: '匿名' },
+  { name: '海盗湾', desc: '全球最大BT索引站', url: 'https://thepiratebay.org/search.php?q={q}', tag: '经典' },
+  { name: '1337x', desc: '用户评分系统 虚假资源少', url: 'https://1337x.to/search/{q}/1/', tag: '靠谱' },
+  { name: 'Torrentz2', desc: '经典BT聚合引擎', url: 'https://torrentz2.nz/search?q={q}', tag: '聚合' },
+  { name: 'BT4G', desc: '元搜索聚合器 资源库巨大', url: 'https://bt4gpro.com/search?q={q}', tag: '海量' },
+  { name: '动漫花园', desc: '中文动漫首选 运营超10年', url: 'https://dmhy.org/topics/list?keyword={q}', tag: '动漫' },
+  { name: 'Nyaa', desc: 'ACG动漫圣地', url: 'https://nyaa.si/?q={q}', tag: '动漫' },
+  { name: 'iDope', desc: '极简界面 类Google体验', url: 'https://idope.se/search/{q}/', tag: '极简' },
+];
+
+// ====== Init ======
+const $input = document.getElementById('searchInput');
+const $btn = document.getElementById('searchBtn');
+const $hint = document.getElementById('keywordHint');
+const $openAll = document.getElementById('openAllBtn');
+const $panGrid = document.getElementById('panGrid');
+const $btGrid = document.getElementById('btGrid');
+const $noMatch = document.getElementById('noMatch');
+const $toast = document.getElementById('toast');
+
+let currentKeyword = '';
+
+renderCards(PAN_SITES, $panGrid, 'pan');
+renderCards(BT_SITES, $btGrid, 'bt');
+
+$input.addEventListener('input', function() {
+  const q = this.value.trim();
+  currentKeyword = q;
+  updateCards();
+  updateOpenAllBtn();
+});
+
+$btn.addEventListener('click', function() {
+  const q = $input.value.trim();
+  currentKeyword = q;
+  updateCards();
+  updateOpenAllBtn();
+  if (q) {
+    $hint.querySelector('strong').textContent = q;
+    $hint.classList.add('show');
+  } else {
+    $hint.classList.remove('show');
+  }
+});
+
+$input.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    $btn.click();
+  }
+});
+
+$openAll.addEventListener('click', function() {
+  if (!currentKeyword) return;
+  const allSites = [...PAN_SITES, ...BT_SITES];
+  const visibleUrls = allSites
+    .map(s => buildUrl(s.url, currentKeyword))
+    .filter(Boolean);
+
+  if (visibleUrls.length === 0) return;
+
+  showToast('正在打开 ' + visibleUrls.length + ' 个站点...');
+  openAll(visibleUrls);
+});
+
+function renderCards(sites, container, type) {
+  container.innerHTML = sites.map(s => {
+    const iconEmoji = s.desc.includes('动漫') ? '🎬' :
+                      s.desc.includes('电子书') || s.desc.includes('学习') ? '📚' :
+                      s.desc.includes('小说') ? '📖' :
+                      s.desc.includes('音乐') ? '🎵' :
+                      type === 'pan' ? '☁️' : '🧲';
+    return `<a class="site-card" data-keywords="${escAttr(s.name + ' ' + s.desc + ' ' + s.tag)}"
+          href="#" data-url="${escAttr(s.url)}" target="_blank" rel="noopener">
+      <div class="site-icon ${type}">${iconEmoji}</div>
+      <div class="site-info">
+        <div class="site-name">${escHtml(s.name)}</div>
+        <div class="site-desc">${escHtml(s.desc)}</div>
+      </div>
+      <span class="site-tag tag-${type}">${escHtml(s.tag)}</span>
+    </a>`;
+  }).join('');
+
+  container.querySelectorAll('.site-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+      e.preventDefault();
+      const q = $input.value.trim();
+      if (!q) {
+        showToast('请先输入搜索关键词');
+        $input.focus();
+        return;
+      }
+      const url = buildUrl(this.dataset.url, q);
+      if (url) {
+        window.open(url, '_blank', 'noopener');
+      }
+    });
+  });
+}
+
+function updateCards() {
+  const q = currentKeyword.toLowerCase();
+  let panVisible = 0, btVisible = 0;
+
+  document.querySelectorAll('#panGrid .site-card').forEach(card => {
+    const match = !q || card.dataset.keywords.toLowerCase().includes(q);
+    card.classList.toggle('hidden', !match);
+    if (match) panVisible++;
+  });
+
+  document.querySelectorAll('#btGrid .site-card').forEach(card => {
+    const match = !q || card.dataset.keywords.toLowerCase().includes(q);
+    card.classList.toggle('hidden', !match);
+    if (match) btVisible++;
+  });
+
+  // If no sites match the filter, show all (keyword is for external search, not site filtering)
+  if (q && panVisible === 0 && btVisible === 0) {
+    document.querySelectorAll('#panGrid .site-card').forEach(c => c.classList.remove('hidden'));
+    document.querySelectorAll('#btGrid .site-card').forEach(c => c.classList.remove('hidden'));
+    panVisible = PAN_SITES.length;
+    btVisible = BT_SITES.length;
+  }
+
+  document.getElementById('panSection').style.display = (q && panVisible === 0) ? 'none' : '';
+  document.getElementById('btSection').style.display = (q && btVisible === 0) ? 'none' : '';
+  $noMatch.classList.remove('show');
+
+  if (q) {
+    $hint.querySelector('strong').textContent = q;
+    $hint.classList.add('show');
+  } else {
+    $hint.classList.remove('show');
+  }
+}
+
+function updateOpenAllBtn() {
+  $openAll.style.display = currentKeyword ? '' : 'none';
+}
+
+function buildUrl(template, keyword) {
+  return template.replace('{q}', encodeURIComponent(keyword));
+}
+
+function openAll(urls) {
+  urls.forEach((url, i) => {
+    setTimeout(() => {
+      window.open(url, '_blank', 'noopener');
+    }, i * 300);
+  });
+}
+
+function showToast(msg) {
+  $toast.textContent = msg;
+  $toast.classList.add('show');
+  clearTimeout($toast._timeout);
+  $toast._timeout = setTimeout(() => $toast.classList.remove('show'), 2000);
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function escAttr(s) {
+  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ====== Set initial state ======
+if ($input.value.trim()) {
+  updateCards();
+  updateOpenAllBtn();
+}
+</script>
+</body>
+</html>
