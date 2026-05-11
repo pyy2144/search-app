@@ -28,27 +28,19 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100dvh;
-  display: flex;
-  justify-content: center;
-  padding: 0 16px;
 }
 
 .container {
   width: 100%;
   max-width: 640px;
-  padding-top: 6vh;
-  padding-bottom: 60px;
+  margin: 0 auto;
+  padding: 6vh 16px 60px;
 }
 
 /* Header */
 .header {
   text-align: center;
-  margin-bottom: 28px;
-}
-
-.header .icon {
-  font-size: 40px;
-  margin-bottom: 8px;
+  margin-bottom: 24px;
 }
 
 .header h1 {
@@ -68,10 +60,7 @@ body {
 .search-box {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
-  position: sticky;
-  top: 16px;
-  z-index: 10;
+  margin-bottom: 16px;
 }
 
 .search-box input {
@@ -84,7 +73,7 @@ body {
   color: var(--text);
   background: var(--card);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s;
   -webkit-appearance: none;
 }
 
@@ -93,73 +82,98 @@ body {
   box-shadow: 0 0 0 3px rgba(232, 160, 191, 0.2);
 }
 
-.search-box input::placeholder {
-  color: #C8A0B0;
-}
+.search-box input::placeholder { color: #C8A0B0; }
 
-.search-box button {
+.search-btn {
   height: 48px;
-  min-width: 48px;
-  width: 48px;
+  padding: 0 24px;
   border: none;
-  border-radius: 50%;
+  border-radius: 24px;
   background: var(--primary);
   color: #fff;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: background 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-btn:hover { background: var(--primary-dark); }
+.search-btn:active { transform: scale(0.97); }
+
+/* Action area */
+.action-area {
+  display: none;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.action-area.show { display: block; }
+
+.action-area .title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.action-area .title strong {
+  color: var(--primary-dark);
+}
+
+.action-area .sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.action-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-open {
+  flex: 1;
+  min-width: 140px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  gap: 6px;
 }
 
-.search-box button:hover { background: var(--primary-dark); }
-.search-box button:active { transform: scale(0.95); }
+.btn-open:active { transform: scale(0.96); }
 
-/* Toolbar */
-.toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.keyword-hint {
-  font-size: 13px;
-  color: var(--text-secondary);
-  display: none;
-}
-
-.keyword-hint.show { display: block; }
-
-.keyword-hint strong {
-  color: var(--primary-dark);
-}
-
-.open-all-btn {
-  font-size: 13px;
-  padding: 6px 16px;
-  border: 1.5px solid var(--primary);
-  border-radius: 20px;
-  background: var(--card);
-  color: var(--primary-dark);
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-
-.open-all-btn:hover {
+.btn-open.primary {
   background: var(--primary);
   color: #fff;
 }
 
-/* Section */
-.section {
-  margin-bottom: 24px;
+.btn-open.primary:hover { background: var(--primary-dark); }
+
+.btn-open.secondary {
+  background: var(--primary-light);
+  color: var(--primary-dark);
 }
+
+.btn-open.secondary:hover { background: #F9D8E8; }
+
+/* Section */
+.section { margin-bottom: 24px; }
 
 .section-title {
   font-size: 14px;
@@ -173,8 +187,7 @@ body {
 }
 
 .section-title .dot {
-  width: 8px;
-  height: 8px;
+  width: 8px; height: 8px;
   border-radius: 50%;
   display: inline-block;
 }
@@ -182,7 +195,7 @@ body {
 .dot-pan { background: var(--tag-pan); }
 .dot-bt  { background: var(--tag-bt); }
 
-/* Site cards grid */
+/* Site cards */
 .site-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -191,6 +204,8 @@ body {
 
 @media (max-width: 420px) {
   .site-grid { grid-template-columns: 1fr; }
+  .action-btns { flex-direction: column; }
+  .btn-open { min-width: auto; }
 }
 
 .site-card {
@@ -199,7 +214,7 @@ body {
   padding: 14px 16px;
   box-shadow: var(--shadow);
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform 0.15s, box-shadow 0.3s, border-color 0.3s;
   text-decoration: none;
   color: inherit;
   display: flex;
@@ -216,17 +231,20 @@ body {
   border-color: var(--primary-light);
 }
 
-.site-card:active {
-  transform: scale(0.97);
+.site-card:active { transform: scale(0.97); }
+.site-card.hidden { display: none; }
+
+@keyframes pulse {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(232, 160, 191, 0.2); }
 }
 
-.site-card.hidden {
-  display: none;
+.site-card.pulse {
+  animation: pulse 0.6s ease-in-out 3;
 }
 
 .site-card .site-icon {
-  width: 38px;
-  height: 38px;
+  width: 38px; height: 38px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -238,10 +256,7 @@ body {
 .site-icon.pan { background: #E8F8FA; }
 .site-icon.bt  { background: #EDF4FB; }
 
-.site-card .site-info {
-  flex: 1;
-  min-width: 0;
-}
+.site-card .site-info { flex: 1; min-width: 0; }
 
 .site-card .site-name {
   font-size: 14px;
@@ -270,17 +285,6 @@ body {
 
 .tag-pan { background: var(--tag-pan); }
 .tag-bt  { background: var(--tag-bt); }
-
-/* No results */
-.no-match {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-hint);
-  font-size: 14px;
-  display: none;
-}
-
-.no-match.show { display: block; }
 
 /* Toast */
 .toast {
@@ -314,19 +318,22 @@ body {
 <body>
 <div class="container">
   <div class="header">
-    <div class="icon">&#x1F50E;</div>
     <h1>资源搜索</h1>
-    <p>搜索动画 / 电影 / 电视剧 / 小说 · 一键搜遍全网</p>
+    <p>搜索动画 / 电影 / 电视剧 / 小说</p>
   </div>
 
   <div class="search-box">
     <input id="searchInput" type="text" placeholder="输入资源名称..." autocomplete="off" autofocus>
-    <button id="searchBtn" title="筛选站点">&#x1F50D;</button>
+    <button id="searchBtn" class="search-btn">搜索</button>
   </div>
 
-  <div class="toolbar">
-    <span id="keywordHint" class="keyword-hint">搜索 <strong></strong> — 点击站点卡片打开结果</span>
-    <button id="openAllBtn" class="open-all-btn" style="display:none">一键打开全部站点</button>
+  <div id="actionArea" class="action-area">
+    <div class="title">搜 <strong id="kwDisplay"></strong></div>
+    <div class="sub">点击下方任意站点卡片在新标签页打开结果</div>
+    <div class="action-btns">
+      <button id="btnQuickOpen" class="btn-open primary">快速搜索（推荐聚合站）</button>
+      <button id="btnOpenAll" class="btn-open secondary">一键打开全部 26 个站点</button>
+    </div>
   </div>
 
   <div id="panSection" class="section">
@@ -339,8 +346,6 @@ body {
     <div id="btGrid" class="site-grid"></div>
   </div>
 
-  <div id="noMatch" class="no-match">没有匹配的站点，换个关键词试试</div>
-
   <div class="footer">
     点击站点卡片在新标签页打开搜索结果<br>
     站点列表来自公开整理，如有失效请联系更新
@@ -350,7 +355,6 @@ body {
 <div id="toast" class="toast"></div>
 
 <script>
-// ====== Site Data ======
 const PAN_SITES = [
   { name: '懒盘搜索', desc: '16家搜索引擎聚合', url: 'https://lzpanx.com/?q={q}', tag: '聚合' },
   { name: '混合盘', desc: '多网盘聚合 + 时间筛选', url: 'https://hunhepan.com/?q={q}', tag: '聚合' },
@@ -383,14 +387,21 @@ const BT_SITES = [
   { name: 'iDope', desc: '极简界面 类Google体验', url: 'https://idope.se/search/{q}/', tag: '极简' },
 ];
 
-// ====== Init ======
+// Quick-open sites when clicking search: top 3 most popular aggregators
+const QUICK_SITES = [
+  { name: '懒盘搜索', url: 'https://lzpanx.com/?q={q}' },
+  { name: '混合盘', url: 'https://hunhepan.com/?q={q}' },
+  { name: '磁力狗', url: 'https://clg.im/search?q={q}' },
+];
+
 const $input = document.getElementById('searchInput');
-const $btn = document.getElementById('searchBtn');
-const $hint = document.getElementById('keywordHint');
-const $openAll = document.getElementById('openAllBtn');
+const $searchBtn = document.getElementById('searchBtn');
+const $actionArea = document.getElementById('actionArea');
+const $kwDisplay = document.getElementById('kwDisplay');
+const $btnQuick = document.getElementById('btnQuickOpen');
+const $btnOpenAll = document.getElementById('btnOpenAll');
 const $panGrid = document.getElementById('panGrid');
 const $btGrid = document.getElementById('btGrid');
-const $noMatch = document.getElementById('noMatch');
 const $toast = document.getElementById('toast');
 
 let currentKeyword = '';
@@ -398,44 +409,84 @@ let currentKeyword = '';
 renderCards(PAN_SITES, $panGrid, 'pan');
 renderCards(BT_SITES, $btGrid, 'bt');
 
-$input.addEventListener('input', function() {
-  const q = this.value.trim();
-  currentKeyword = q;
-  updateCards();
-  updateOpenAllBtn();
-});
-
-$btn.addEventListener('click', function() {
+// ---- Search button: quick open top aggregator sites ----
+$searchBtn.addEventListener('click', function() {
   const q = $input.value.trim();
-  currentKeyword = q;
-  updateCards();
-  updateOpenAllBtn();
-  if (q) {
-    $hint.querySelector('strong').textContent = q;
-    $hint.classList.add('show');
-  } else {
-    $hint.classList.remove('show');
+  if (!q) {
+    showToast('请输入搜索关键词');
+    $input.focus();
+    return;
   }
+  currentKeyword = q;
+  doSearch();
 });
 
 $input.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') {
-    $btn.click();
+    $searchBtn.click();
   }
 });
 
-$openAll.addEventListener('click', function() {
+// Filter cards as user types
+$input.addEventListener('input', function() {
+  currentKeyword = this.value.trim();
+  updateCards();
+  if (currentKeyword) {
+    $actionArea.classList.add('show');
+    $kwDisplay.textContent = currentKeyword;
+  } else {
+    $actionArea.classList.remove('show');
+  }
+});
+
+function doSearch() {
+  // Show action area
+  $actionArea.classList.add('show');
+  $kwDisplay.textContent = currentKeyword;
+
+  // Open top 3 aggregator sites immediately
+  const urls = QUICK_SITES.map(s => s.url.replace('{q}', encodeURIComponent(currentKeyword)));
+  showToast('正在打开 ' + urls.length + ' 个聚合站搜索结果...');
+  openBatch(urls);
+
+  // Pulse the remaining cards to draw attention
+  pulseAllCards();
+
+  // Update card filtering
+  updateCards();
+}
+
+function pulseAllCards() {
+  document.querySelectorAll('.site-card:not(.hidden)').forEach((card, i) => {
+    setTimeout(() => {
+      card.classList.add('pulse');
+      setTimeout(() => card.classList.remove('pulse'), 1800);
+    }, i * 50);
+  });
+}
+
+// Quick open button
+$btnQuick.addEventListener('click', function() {
+  if (!currentKeyword) return;
+  const urls = QUICK_SITES.map(s => s.url.replace('{q}', encodeURIComponent(currentKeyword)));
+  showToast('正在打开 ' + urls.length + ' 个聚合站搜索结果...');
+  openBatch(urls);
+});
+
+// Open all button
+$btnOpenAll.addEventListener('click', function() {
   if (!currentKeyword) return;
   const allSites = [...PAN_SITES, ...BT_SITES];
-  const visibleUrls = allSites
-    .map(s => buildUrl(s.url, currentKeyword))
-    .filter(Boolean);
-
-  if (visibleUrls.length === 0) return;
-
-  showToast('正在打开 ' + visibleUrls.length + ' 个站点...');
-  openAll(visibleUrls);
+  const urls = allSites.map(s => s.url.replace('{q}', encodeURIComponent(currentKeyword)));
+  showToast('正在打开全部 ' + urls.length + ' 个站点...');
+  openBatch(urls);
 });
+
+function openBatch(urls) {
+  urls.forEach((url, i) => {
+    setTimeout(() => window.open(url, '_blank', 'noopener'), i * 250);
+  });
+}
 
 function renderCards(sites, container, type) {
   container.innerHTML = sites.map(s => {
@@ -458,13 +509,12 @@ function renderCards(sites, container, type) {
   container.querySelectorAll('.site-card').forEach(card => {
     card.addEventListener('click', function(e) {
       e.preventDefault();
-      const q = $input.value.trim();
-      if (!q) {
+      if (!currentKeyword) {
         showToast('请先输入搜索关键词');
         $input.focus();
         return;
       }
-      const url = buildUrl(this.dataset.url, q);
+      const url = buildUrl(this.dataset.url, currentKeyword);
       if (url) {
         window.open(url, '_blank', 'noopener');
       }
@@ -474,61 +524,39 @@ function renderCards(sites, container, type) {
 
 function updateCards() {
   const q = currentKeyword.toLowerCase();
-  let panVisible = 0, btVisible = 0;
+  let panV = 0, btV = 0;
 
-  document.querySelectorAll('#panGrid .site-card').forEach(card => {
-    const match = !q || card.dataset.keywords.toLowerCase().includes(q);
-    card.classList.toggle('hidden', !match);
-    if (match) panVisible++;
+  document.querySelectorAll('#panGrid .site-card').forEach(c => {
+    const m = !q || c.dataset.keywords.toLowerCase().includes(q);
+    c.classList.toggle('hidden', !m);
+    if (m) panV++;
+  });
+  document.querySelectorAll('#btGrid .site-card').forEach(c => {
+    const m = !q || c.dataset.keywords.toLowerCase().includes(q);
+    c.classList.toggle('hidden', !m);
+    if (m) btV++;
   });
 
-  document.querySelectorAll('#btGrid .site-card').forEach(card => {
-    const match = !q || card.dataset.keywords.toLowerCase().includes(q);
-    card.classList.toggle('hidden', !match);
-    if (match) btVisible++;
-  });
-
-  // If no sites match the filter, show all (keyword is for external search, not site filtering)
-  if (q && panVisible === 0 && btVisible === 0) {
+  if (q && panV === 0 && btV === 0) {
     document.querySelectorAll('#panGrid .site-card').forEach(c => c.classList.remove('hidden'));
     document.querySelectorAll('#btGrid .site-card').forEach(c => c.classList.remove('hidden'));
-    panVisible = PAN_SITES.length;
-    btVisible = BT_SITES.length;
+    panV = PAN_SITES.length;
+    btV = BT_SITES.length;
   }
 
-  document.getElementById('panSection').style.display = (q && panVisible === 0) ? 'none' : '';
-  document.getElementById('btSection').style.display = (q && btVisible === 0) ? 'none' : '';
-  $noMatch.classList.remove('show');
-
-  if (q) {
-    $hint.querySelector('strong').textContent = q;
-    $hint.classList.add('show');
-  } else {
-    $hint.classList.remove('show');
-  }
-}
-
-function updateOpenAllBtn() {
-  $openAll.style.display = currentKeyword ? '' : 'none';
+  document.getElementById('panSection').style.display = (q && panV === 0) ? 'none' : '';
+  document.getElementById('btSection').style.display = (q && btV === 0) ? 'none' : '';
 }
 
 function buildUrl(template, keyword) {
   return template.replace('{q}', encodeURIComponent(keyword));
 }
 
-function openAll(urls) {
-  urls.forEach((url, i) => {
-    setTimeout(() => {
-      window.open(url, '_blank', 'noopener');
-    }, i * 300);
-  });
-}
-
 function showToast(msg) {
   $toast.textContent = msg;
   $toast.classList.add('show');
   clearTimeout($toast._timeout);
-  $toast._timeout = setTimeout(() => $toast.classList.remove('show'), 2000);
+  $toast._timeout = setTimeout(() => $toast.classList.remove('show'), 2500);
 }
 
 function escHtml(s) {
@@ -539,12 +567,6 @@ function escHtml(s) {
 
 function escAttr(s) {
   return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-// ====== Set initial state ======
-if ($input.value.trim()) {
-  updateCards();
-  updateOpenAllBtn();
 }
 </script>
 </body>
